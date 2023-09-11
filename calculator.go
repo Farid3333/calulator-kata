@@ -41,7 +41,7 @@ func main() {
 	fmt.Println("Введите операцию:")
 	text, err := reader.ReadString('\n')
 	if err != nil {
-		fmt.Printf("случалась ошибка при чтении текста; %v\n", err)
+		panic(fmt.Sprintf("случалась ошибка при чтении текста; %v\n", err))
 	}
 	text = strings.TrimSpace(text)
 	var values []string
@@ -52,6 +52,9 @@ func main() {
 		}
 	}
 
+	if len(values) != 3 {
+		panic("Ошибка: должна быть одна операция (+, -, *, /) с 2 операндами и между ними пробел")
+	}
 	num1Str, op, num2Str := values[0], values[1], values[2]
 
 	_, isNum1Romans := romans2Arabic[num1Str]
@@ -61,18 +64,15 @@ func main() {
 	_, isArabicNum2 := strconv.Atoi(num2Str)
 
 	if !isNum1Romans && isArabicNum1 != nil || !isNum2Romans && isArabicNum2 != nil {
-		fmt.Println("Ошибка: операнды не являются числами")
-		return
+		panic("Ошибка: операнды не являются числами")
 	}
 
 	if isNum1Romans && !isNum2Romans || !isNum1Romans && isNum2Romans {
-		fmt.Println("Ошибка: нельзя смешивать римские и арабские числа.")
-		return
+		panic("Ошибка: нельзя смешивать римские и арабские числа.")
 	}
 
 	if op != "+" && op != "-" && op != "*" && op != "/" {
-		fmt.Println("Ошибка: неизвестная операция, можно только +, -, *, /")
-		return
+		panic("Ошибка: неизвестная операция, можно только +, -, *, /")
 	}
 
 	var num1, num2 int
@@ -85,30 +85,25 @@ func main() {
 	}
 
 	if num1 < 1 || num1 > 10 || num2 < 1 || num2 > 10 {
-		fmt.Println("Ошибка: числа должны быть в диапазоне от 1 до 10.")
-		return
+		panic("Ошибка: числа должны быть в диапазоне от 1 до 10.")
 	}
 
-	result := operation(num1, num2, op)
+	resultInt := operation(num1, num2, op)
+	var resultString string
 	if isNum1Romans {
-		if result < 1 {
-			fmt.Println("Ошибка: в римской системе нет отрицательных чисел или нуля.")
-			return
-		}
-		fmt.Println(arabicToRoman(result))
-	} else {
-		fmt.Println(result)
+		resultString = arabicToRoman(resultInt)
 	}
+	fmt.Println(resultString)
 }
 
 func arabicToRoman(num int) string {
 	if num < 1 {
-		return "Exception"
+		panic("Ошибка: в римской системе нет отрицательных чисел или нуля.")
 	}
 
 	result := ""
-	values := []int{10, 9, 5, 4, 1}
-	symbols := []string{"X", "IX", "V", "IV", "I"}
+	values := []int{100, 90, 50, 40, 10, 9, 5, 4, 1}
+	symbols := []string{"C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"}
 
 	for i, value := range values {
 		for num >= value {
