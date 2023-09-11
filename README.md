@@ -1,1 +1,1 @@
-# calulator-kata
+# calсulator-kata
