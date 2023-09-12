@@ -41,7 +41,7 @@ func main() {
 	fmt.Println("Введите операцию:")
 	text, err := reader.ReadString('\n')
 	if err != nil {
-		panic(fmt.Sprintf("случалась ошибка при чтении текста; %v\n", err))
+		panic(fmt.Sprintf("Случилась ошибка при чтении текста: %v\n", err))
 	}
 	text = strings.TrimSpace(text)
 	var values []string
@@ -60,10 +60,10 @@ func main() {
 	_, isNum1Romans := romans2Arabic[num1Str]
 	_, isNum2Romans := romans2Arabic[num2Str]
 
-	_, isArabicNum1 := strconv.Atoi(num1Str)
-	_, isArabicNum2 := strconv.Atoi(num2Str)
+	_, err1 := strconv.Atoi(num1Str)
+	_, err2 := strconv.Atoi(num2Str)
 
-	if !isNum1Romans && isArabicNum1 != nil || !isNum2Romans && isArabicNum2 != nil {
+	if !isNum1Romans && err1 != nil || !isNum2Romans && err2 != nil {
 		panic("Ошибка: операнды не являются числами")
 	}
 
@@ -92,6 +92,8 @@ func main() {
 	var resultString string
 	if isNum1Romans {
 		resultString = arabicToRoman(resultInt)
+	} else {
+		resultString = strconv.Itoa(resultInt)
 	}
 	fmt.Println(resultString)
 }
